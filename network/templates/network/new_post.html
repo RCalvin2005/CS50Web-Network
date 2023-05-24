@@ -1,0 +1,21 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+    <div class="container">
+
+        <h2>New Post</h2>
+
+        {% if message %}
+            <div class="alert alert-danger">{{ message }}</div>
+        {% endif %}
+
+        <form action="{% url 'new_post' %}" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <textarea autofocus class="form-control" name="content" rows="5" placeholder="Write your post here!"></textarea>
+            </div>
+            <input class="btn btn-primary" type="submit" value="Post">
+        </form>
+
+    </div>
+{% endblock %}

@@ -4,11 +4,32 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
+from .models import User, Post
 
 
 def index(request):
     return render(request, "network/index.html")
+
+
+def new_post(request):
+    if request.method == "POST":
+
+        content = request.POST["content"]
+        if not content:
+            return render(request, "network/new_post.html", {
+                "message": "Post content cannot be empty."
+            })
+
+        post = Post(
+            user = request.user,
+            content = content,
+        )
+        post.save()
+
+        return HttpResponseRedirect(reverse("index"))
+
+    else:
+        return render(request, "network/new_post.html")
 
 
 def login_view(request):
