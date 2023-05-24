@@ -41,6 +41,16 @@ def register(request):
         username = request.POST["username"]
         email = request.POST["email"]
 
+        # Ensure username and password is not empty
+        if not username:
+            return render(request, "network/register.html", {
+                "message": "Missing username."
+            })
+        if not email:
+            return render(request, "network/register.html", {
+                "message": "Missing email."
+            })
+
         # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
