@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
+from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
@@ -8,10 +9,17 @@ from .models import User, Post
 
 
 def index(request):
-    return render(request, "network/index.html")
+    """ Displays all posts """
+
+    return render(request, "network/index.html", {
+        "posts": Post.objects.all().order_by("-timestamp")
+    })
 
 
+@login_required
 def new_post(request):
+    """ Allows user to create new post """
+
     if request.method == "POST":
 
         content = request.POST["content"]

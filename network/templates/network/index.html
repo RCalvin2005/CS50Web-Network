@@ -1,5 +1,17 @@
 {% extends "network/layout.html" %}
 
 {% block body %}
-    TODO
+    {% for post in posts %}
+        <div class="row border rounded p-2 mx-0">
+            <div>
+                <strong>{{ post.user }}</strong>
+                <span class="text-muted">· {{ post.timestamp }}</span>
+            </div>
+            <div class="">
+                {{ post.content }}
+            </div>
+        </div>
+    {% empty %}
+        No posts has been made.
+    {% endfor %}
 {% endblock %}
