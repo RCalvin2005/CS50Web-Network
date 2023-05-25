@@ -1,7 +1,9 @@
+import json
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
 
@@ -17,22 +19,48 @@ def index(request):
 
 
 def profile(request, username):
-    """ Displays profile page of given user """
+    """ Displays profile page of given user and update follow status """
 
-    # https://stackoverflow.com/questions/11743207/how-to-query-case-insensitive-data-in-django-orm
-    try:
-        user = User.objects.get(username__iexact=username)
-    except User.DoesNotExist:
-        return render(request, "network/error.html", {
-            "message": f"The user {username} does not exist"
+    if request.method == "GET":
+        # https://stackoverflow.com/questions/11743207/how-to-query-case-insensitive-data-in-django-orm
+        try:
+            profile_user = User.objects.get(username__iexact=username)
+        except User.DoesNotExist:
+            return render(request, "network/error.html", {
+                "message": f"The user {username} does not exist"
+            })
+
+        return render(request, "network/profile.html", {
+            "profile_user": profile_user,
+            "posts": Post.objects.filter(user=profile_user).order_by("-timestamp"),
+            "followers": profile_user.followers.count(),
+            "following": profile_user.following.count(),
+            "is_following": request.user in profile_user.followers.all(),
         })
+    
+    # Update follow status
+    elif request.method == "PUT":
+        try:
+            profile_user = User.objects.get(username__iexact=username)
+        except User.DoesNotExist:
+            return JsonResponse({"error": f"The user {username} does not exist"}, status=404)
 
-    return render(request, "network/profile.html", {
-        "username": user.username,
-        "posts": Post.objects.filter(user=user).order_by("-timestamp"),
-        "followers": user.followers.count(),
-        "following": user.following.count()
-    })
+        # Reject if trying to follow own account
+        if request.user == profile_user:
+            return JsonResponse({"error": f"Cannot follow user's own account"}, status=400)
+
+        data = json.loads(request.body)
+        if data.get("set_to_following") is not None:
+            if data.get("set_to_following"):
+                profile_user.followers.add(request.user)
+            else:
+                profile_user.followers.remove(request.user)
+        return HttpResponse(status=204)
+
+    else:
+        return JsonResponse({
+            "error": "GET or PUT request required."
+        }, status=400)
 
 
 @login_required
