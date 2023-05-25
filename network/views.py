@@ -29,7 +29,9 @@ def profile(request, username):
 
     return render(request, "network/profile.html", {
         "username": user.username,
-        "posts": Post.objects.filter(user=user).order_by("-timestamp")
+        "posts": Post.objects.filter(user=user).order_by("-timestamp"),
+        "followers": user.followers.count(),
+        "following": user.following.count()
     })
 
 

@@ -5,13 +5,17 @@
     <h2>All Posts</h2>
 
     {% for post in posts %}
-        <div class="row border rounded p-2 mx-0">
-            <div>
-                <a href="{% url 'profile' post.user %}" class="link-dark link-offset-2 link-underline-opacity-0 link-underline-opacity-75-hover">
-                    <strong>{{ post.user }}</strong>
-                </a>
-                <span class="fw-bold">·</span>
-                <span class="text-muted"> {{ post.timestamp }}</span>
+        <div class="row border rounded p-2 mx-0 mb-1">
+            <div class="row gap-0">
+                <div class="col-auto pe-2">
+                    <a href="{% url 'profile' post.user %}" class="link-dark link-offset-2 link-underline-opacity-0 link-underline-opacity-75-hover">
+                        <strong>{{ post.user }}</strong>
+                    </a>                    
+                </div>
+                <div class="col-auto p-0 fw-bold">·</div>
+                <div class="col-auto ps-2 text-muted">
+                    {{ post.timestamp }}
+                </div>
             </div>
             <div>
                 {{ post.content }}
