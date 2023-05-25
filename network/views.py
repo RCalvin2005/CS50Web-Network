@@ -16,6 +16,23 @@ def index(request):
     })
 
 
+def profile(request, username):
+    """ Displays profile page of given user """
+
+    # https://stackoverflow.com/questions/11743207/how-to-query-case-insensitive-data-in-django-orm
+    try:
+        user = User.objects.get(username__iexact=username)
+    except User.DoesNotExist:
+        return render(request, "network/error.html", {
+            "message": f"The user {username} does not exist"
+        })
+
+    return render(request, "network/profile.html", {
+        "username": user.username,
+        "posts": Post.objects.filter(user=user).order_by("-timestamp")
+    })
+
+
 @login_required
 def new_post(request):
     """ Allows user to create new post """
