@@ -14,7 +14,20 @@ def index(request):
     """ Displays all posts """
 
     return render(request, "network/index.html", {
+        "heading": "All Posts",
         "posts": Post.objects.all().order_by("-timestamp")
+    })
+
+
+@login_required
+def following(request):
+    """ Displays posts from users that the request user is following """
+
+    # https://stackoverflow.com/questions/4016794/how-to-filter-a-django-queryset-using-an-array-on-a-field-like-sqls-in
+
+    return render(request, "network/index.html", {
+        "heading": "Following",
+        "posts": Post.objects.filter(user__in=request.user.following.all()).order_by("-timestamp")
     })
 
 
@@ -40,6 +53,9 @@ def profile(request, username):
     
     # Update follow status
     elif request.method == "PUT":
+        if not request.user.is_authenticated:
+            return JsonResponse({"error": f"Login in to follow other users"}, status=400)
+
         try:
             profile_user = User.objects.get(username__iexact=username)
         except User.DoesNotExist:
