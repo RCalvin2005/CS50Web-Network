@@ -4,7 +4,7 @@
 
     <h2>{{ heading }}</h2>
 
-    {% for post in posts %}
+    {% for post in page_obj %}
         <div class="row border rounded p-2 mx-0 mb-1">
             <div class="row gap-0">
                 <div class="col-auto pe-2">
@@ -24,4 +24,45 @@
     {% empty %}
         No posts has been made.
     {% endfor %}
+
+    <nav class="mt-3" aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-label="Previous">&laquo;</span>
+                </li>
+            {% endif %}
+
+            {% for page_num in page_obj.paginator.page_range %}
+                {% if page_num == page_obj.number %}
+                    <li class="page-item active">
+                        <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                    </li>
+                {% else %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ page_num }}">{{ page_num }}</a>
+                    </li>
+                {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ page_obj.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-label="Next">&raquo;</span>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+
 {% endblock %}

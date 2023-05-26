@@ -6,6 +6,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.urls import reverse
+from django.core.paginator import Paginator
 
 from .models import User, Post
 
@@ -13,9 +14,17 @@ from .models import User, Post
 def index(request):
     """ Displays all posts """
 
+    # https://docs.djangoproject.com/en/4.2/topics/pagination/
+
+    posts = Post.objects.all().order_by("-timestamp")
+    paginator = Paginator(posts, 10)
+
+    page_num= request.GET.get('page')
+    page_obj = paginator.get_page(page_num)
+
     return render(request, "network/index.html", {
         "heading": "All Posts",
-        "posts": Post.objects.all().order_by("-timestamp")
+        "page_obj": page_obj
     })
 
 
@@ -25,9 +34,15 @@ def following(request):
 
     # https://stackoverflow.com/questions/4016794/how-to-filter-a-django-queryset-using-an-array-on-a-field-like-sqls-in
 
+    posts = Post.objects.filter(user__in=request.user.following.all()).order_by("-timestamp")
+    paginator = Paginator(posts, 10)
+
+    page_num= request.GET.get('page')
+    page_obj = paginator.get_page(page_num)
+
     return render(request, "network/index.html", {
         "heading": "Following",
-        "posts": Post.objects.filter(user__in=request.user.following.all()).order_by("-timestamp")
+        "page_obj": page_obj
     })
 
 
@@ -43,9 +58,15 @@ def profile(request, username):
                 "message": f"The user {username} does not exist"
             })
 
+        posts = Post.objects.filter(user=profile_user).order_by("-timestamp")
+        paginator = Paginator(posts, 10)
+
+        page_num= request.GET.get('page')
+        page_obj = paginator.get_page(page_num)
+
         return render(request, "network/profile.html", {
             "profile_user": profile_user,
-            "posts": Post.objects.filter(user=profile_user).order_by("-timestamp"),
+            "page_obj": page_obj,
             "followers": profile_user.followers.count(),
             "following": profile_user.following.count(),
             "is_following": request.user in profile_user.followers.all(),
