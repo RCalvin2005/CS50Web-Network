@@ -1,3 +1,16 @@
 .follow-btn {
     border-radius: 40px;
 }
+
+.edit-div {
+    font-weight: 600;
+    color: #007BFF;
+    cursor: pointer;
+    user-select: none;
+}
+
+.edit-div:hover {
+    color: #0069DA;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}
