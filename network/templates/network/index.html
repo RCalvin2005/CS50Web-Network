@@ -14,8 +14,11 @@
                     </a>                    
                 </div>
                 <div class="col-auto p-0 fw-bold">·</div>
-                <div class="col-auto ps-2 text-muted">
+                <div class="col-auto ps-2 text-muted timestamp">
                     {{ post.timestamp }}
+                    {% if post.edited %}
+                        (edited)
+                    {% endif %}
                 </div>
                 {% if user == post.user %}
                     <div class="col-auto ms-auto edit-div">
@@ -74,5 +77,8 @@
 {% endblock %}
 
 {% block script %}
+    <script>
+        var csrf_token = '{{ csrf_token }}';
+    </script>
     <script src="{% static 'network/edit.js' %}"></script>
 {% endblock %}

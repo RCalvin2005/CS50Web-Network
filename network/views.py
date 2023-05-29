@@ -28,6 +28,40 @@ def index(request):
     })
 
 
+def post(request, post_id):
+    """ Sends or updates post data """
+
+    try:
+        post = Post.objects.get(pk=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Post not found."}, status=404)
+
+    # Return post data
+    if request.method == "GET":
+        return JsonResponse(post.serialize())
+    
+    # Update post content 
+    elif request.method == "PUT":
+        if not request.user.is_authenticated:
+            return JsonResponse({"error": f"Login in to follow other users"}, status=400)
+
+        # Reject if trying to edit other's post
+        if request.user != post.user:
+            return JsonResponse({"error": f"Cannot edit other's posts"}, status=400)
+
+        data = json.loads(request.body)
+        if data.get("content") is not None:
+            post.content = data.get("content")
+            post.edited = True
+            post.save()
+        return HttpResponse(status=204)    
+
+    else:
+        return JsonResponse({
+            "error": "GET or PUT request required."
+        }, status=400)
+
+
 @login_required
 def following(request):
     """ Displays posts from users that the request user is following """

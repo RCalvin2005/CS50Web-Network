@@ -27,7 +27,7 @@ function follow() {
     fetch(`/profile/${follow_div.dataset.profileUser}`, {
         method: 'PUT',
         headers: {
-            'X-CSRFToken': follow_div.dataset.csrf,
+            'X-CSRFToken': csrf_token,
         },
         body: JSON.stringify({
             set_to_following: follow_div.dataset.isFollowing === "False"
