@@ -28,6 +28,37 @@ def index(request):
     })
 
 
+def like(request, post_id):
+    """ Updates like status """
+
+    try:
+        post = Post.objects.get(pk=post_id)
+    except Post.DoesNotExist:
+        return JsonResponse({"error": "Post not found."}, status=404)
+    
+    # Update like status
+    if request.method == "PUT":
+        if not request.user.is_authenticated:
+            return JsonResponse({"error": "Login in to like a post"}, status=400)
+
+        # Reject if trying to like own post
+        if request.user == post.user:
+            return JsonResponse({"error": "Cannot like own posts"}, status=400)
+
+        data = json.loads(request.body)
+        if data.get("like") is not None:
+            if data.get("like"):
+                post.likes.add(request.user)
+            else:
+                post.likes.remove(request.user)
+        return HttpResponse(status=204)    
+
+    else:
+        return JsonResponse({
+            "error": "PUT request required."
+        }, status=400)
+
+
 def post(request, post_id):
     """ Sends or updates post data """
 

@@ -1,5 +1,6 @@
 {% extends "network/layout.html" %}
 {% load static %}
+{% load custom_filters %}
 
 {% block body %}
 
@@ -45,6 +46,19 @@
             <div class="content-div">
                 {{ post.content }}
             </div>
+
+            {% liked user post as liked %}
+            <div class="like-div col-auto d-flex align-items-center gap-2" data-liked="{{ liked }}" data-post-user="{{ post.user }}">
+                {% if liked %}
+                    <i class="fa-solid fa-heart"></i>
+                {% else %}
+                    <i class="fa-regular fa-heart"></i>
+                {% endif %}
+                <div class="col-auto like-count fw-semibold">
+                    {{ post.like_count }}
+                </div>
+            </div>
+            
         </div>
     {% empty %}
         No posts has been made.
@@ -95,7 +109,10 @@
 {% block script %}
     <script>
         var csrf_token = '{{ csrf_token }}';
+        const logged_in = '{{ user.is_authenticated }}';
+        const user = '{{ user }}';
     </script>
     <script src="{% static 'network/follow.js' %}"></script>
     <script src="{% static 'network/edit.js' %}"></script>
+    <script src="{% static 'network/like.js' %}"></script>
 {% endblock %}

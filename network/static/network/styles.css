@@ -15,11 +15,11 @@
     text-underline-offset: 4px;
 }
 
-[data-liked="false"] {
+[data-liked="False"] {
     color: #6C757D;
 }
 
-[data-liked="true"] {
+[data-liked="True"] {
     color: #FF2052;
 }
 

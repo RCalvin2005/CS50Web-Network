@@ -1,5 +1,6 @@
 {% extends "network/layout.html" %}
 {% load static %}
+{% load custom_filters %}
 
 {% block body %}
 
@@ -26,14 +27,20 @@
                     </div>
                 {% endif %}
             </div>
+
             <div class="content-div">
                 {{ post.content }}
             </div>
-            <div class="like-div col-auto d-flex align-items-center gap-2" data-liked="true">
-                <i class="fa-regular fa-heart"></i>
-                <i class="fa-solid fa-heart" data-liked="true"></i>
+            
+            {% liked user post as liked %}
+            <div class="like-div col-auto d-flex align-items-center gap-2" data-liked="{{ liked }}" data-post-user="{{ post.user }}">
+                {% if liked %}
+                    <i class="fa-solid fa-heart"></i>
+                {% else %}
+                    <i class="fa-regular fa-heart"></i>
+                {% endif %}
                 <div class="col-auto like-count fw-semibold">
-                    3
+                    {{ post.like_count }}
                 </div>
             </div>
         </div>
@@ -85,7 +92,10 @@
 
 {% block script %}
     <script>
-        var csrf_token = '{{ csrf_token }}';
+        const csrf_token = '{{ csrf_token }}';
+        const logged_in = '{{ user.is_authenticated }}';
+        const user = '{{ user }}';
     </script>
     <script src="{% static 'network/edit.js' %}"></script>
+    <script src="{% static 'network/like.js' %}"></script>
 {% endblock %}
