@@ -29,6 +29,13 @@
             <div class="content-div">
                 {{ post.content }}
             </div>
+            <div class="like-div col-auto d-flex align-items-center gap-2" data-liked="true">
+                <i class="fa-regular fa-heart"></i>
+                <i class="fa-solid fa-heart" data-liked="true"></i>
+                <div class="col-auto like-count fw-semibold">
+                    3
+                </div>
+            </div>
         </div>
     {% empty %}
         No posts has been made.

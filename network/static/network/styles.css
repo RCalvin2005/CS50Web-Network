@@ -14,3 +14,30 @@
     text-decoration: underline;
     text-underline-offset: 4px;
 }
+
+[data-liked="false"] {
+    color: #6C757D;
+}
+
+[data-liked="true"] {
+    color: #FF2052;
+}
+
+.fa-heart{
+    line-height: 30px !important;
+    width: 30px;
+    height: 30px;
+    font-size: 18px;
+    border-radius: 50%;
+    text-align: center;
+}
+
+.like-div:hover {
+    color: #FF2052;
+    cursor: pointer;
+    transform: scale(1.04, 1.04);
+}
+
+.like-div:hover > .fa-heart {
+    background-color: #ffdce3c5;
+}
